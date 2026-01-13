@@ -1,1 +1,54 @@
 //Hello word?
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Service Directory</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-100 min-h-screen p-8">
+
+    <div class="max-w-2xl mx-auto">
+        <div class="flex justify-between items-center mb-8">
+            <h1 class="text-3xl font-bold text-slate-800">Resources</h1>
+            <a href="/admin.html" class="text-xs text-slate-300 hover:text-slate-500">Admin</a>
+        </div>
+
+        <div id="loading" class="text-center text-slate-500">Loading services...</div>
+        
+        <div id="service-list" class="space-y-4"></div>
+    </div>
+
+    <script>
+        // REPLACE THIS WITH YOUR DEPLOYED WORKER URL LATER
+        const API_URL = "http://localhost:8787/api/services"; 
+
+        async function loadServices() {
+            try {
+                const res = await fetch(API_URL);
+                const data = await res.json();
+                
+                const container = document.getElementById('service-list');
+                document.getElementById('loading').style.display = 'none';
+
+                data.forEach(service => {
+                    const card = `
+                        <a href="${service.link}" target="_blank" class="block group">
+                            <div class="bg-white p-6 rounded-lg shadow-sm border border-slate-200 hover:shadow-md hover:border-blue-400 transition-all">
+                                <h2 class="text-xl font-semibold text-slate-800 group-hover:text-blue-600">${service.title}</h2>
+                                <p class="text-slate-600 mt-1">${service.description}</p>
+                            </div>
+                        </a>
+                    `;
+                    container.innerHTML += card;
+                });
+            } catch (error) {
+                console.error("Error loading services:", error);
+            }
+        }
+
+        loadServices();
+    </script>
+</body>
+</html>
