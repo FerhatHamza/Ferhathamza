@@ -1,1 +1,80 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-800 min-h-screen flex items-center justify-center p-4">
+
+    <div class="bg-white p-8 rounded-xl shadow-2xl w-full max-w-md">
+        <h2 class="text-2xl font-bold mb-6 text-slate-800">Add New Service</h2>
+        
+        <form id="addForm" class="space-y-4">
+            <div>
+                <label class="block text-sm font-medium text-slate-700">Admin Secret</label>
+                <input type="password" id="secret" class="w-full mt-1 p-2 border rounded" placeholder="Enter password" required>
+            </div>
+            
+            <hr class="my-4">
+
+            <div>
+                <label class="block text-sm font-medium text-slate-700">Service Title</label>
+                <input type="text" id="title" class="w-full mt-1 p-2 border rounded" required>
+            </div>
+            
+            <div>
+                <label class="block text-sm font-medium text-slate-700">Description (One line)</label>
+                <input type="text" id="description" class="w-full mt-1 p-2 border rounded" required>
+            </div>
+            
+            <div>
+                <label class="block text-sm font-medium text-slate-700">Link URL</label>
+                <input type="url" id="link" class="w-full mt-1 p-2 border rounded" placeholder="https://" required>
+            </div>
+
+            <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 font-medium">Add Link</button>
+        </form>
+    </div>
+
+    <script>
+        // REPLACE THIS WITH YOUR DEPLOYED WORKER URL LATER
+        const API_URL = "http://localhost:8787/api/services";
+
+        document.getElementById('addForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const secret = document.getElementById('secret').value;
+            const data = {
+                title: document.getElementById('title').value,
+                description: document.getElementById('description').value,
+                link: document.getElementById('link').value
+            };
+
+            try {
+                const res = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': secret // Sending the password in header
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                if (res.ok) {
+                    alert('Service added!');
+                    document.getElementById('addForm').reset();
+                    // Keep the password filled for convenience
+                    document.getElementById('secret').value = secret; 
+                } else {
+                    alert('Failed: Wrong password or error.');
+                }
+            } catch (err) {
+                alert('Error connecting to server');
+            }
+        });
+    </script>
+</body>
+</html>
